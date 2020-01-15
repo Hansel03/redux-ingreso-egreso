@@ -6,6 +6,12 @@ import Swal from "sweetalert2";
 import * as firebase from "firebase";
 import { map } from "rxjs/operators";
 import { User } from "./user.model";
+import { Store } from "@ngrx/store";
+import { AppState } from "../app.reducer";
+import {
+  ActivarLoadingAction,
+  DesactivarLoadingAction
+} from "../shared/ui.accions";
 
 @Injectable({
   providedIn: "root"
@@ -14,7 +20,8 @@ export class AuthService {
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
-    private afDB: AngularFirestore
+    private afDB: AngularFirestore,
+    private store: Store<AppState>
   ) {}
 
   initAuthListener() {
@@ -24,6 +31,8 @@ export class AuthService {
   }
 
   crearUsuario(name: string, email: string, password: string) {
+    this.store.dispatch(new ActivarLoadingAction());
+
     this.afAuth.auth
       .createUserWithEmailAndPassword(email, password)
       .then(resp => {
@@ -38,25 +47,31 @@ export class AuthService {
           .set(user)
           .then(() => {
             this.router.navigate(["/"]);
+            this.store.dispatch(new DesactivarLoadingAction());
           });
 
         this.router.navigate(["/"]);
       })
       .catch(error => {
         console.error(error);
+        this.store.dispatch(new DesactivarLoadingAction());
         Swal.fire("Error en el registro", error.message, "error");
       });
   }
 
   login(email: string, password: string) {
+    this.store.dispatch(new ActivarLoadingAction());
+
     this.afAuth.auth
       .signInWithEmailAndPassword(email, password)
       .then(resp => {
         console.log(resp);
+        this.store.dispatch(new DesactivarLoadingAction());
         this.router.navigate(["/"]);
       })
       .catch(error => {
         console.error(error);
+        this.store.dispatch(new DesactivarLoadingAction());
         Swal.fire("Error login", error.message, "error");
       });
   }
