@@ -12,6 +12,7 @@ import {
   ActivarLoadingAction,
   DesactivarLoadingAction
 } from "../shared/ui.accions";
+import { SetUserAction } from "./auth.actions";
 
 @Injectable({
   providedIn: "root"
@@ -26,7 +27,15 @@ export class AuthService {
 
   initAuthListener() {
     this.afAuth.authState.subscribe((fbUSer: firebase.User) => {
-      console.log(fbUSer);
+      if (fbUSer) {
+        this.afDB
+          .doc(`${fbUSer.uid}/usuario`)
+          .valueChanges()
+          .subscribe(usuarioObj => {
+            console.log(usuarioObj);
+          });
+      }
+      // this.store.dispatch(new SetUserAction(fbUSer.));
     });
   }
 
