@@ -13,11 +13,14 @@ import {
   DesactivarLoadingAction
 } from "../shared/ui.accions";
 import { SetUserAction } from "./auth.actions";
+import { Subscription } from "rxjs";
 
 @Injectable({
   providedIn: "root"
 })
 export class AuthService {
+  private userSubcription: Subscription = new Subscription();
+
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
@@ -28,14 +31,16 @@ export class AuthService {
   initAuthListener() {
     this.afAuth.authState.subscribe((fbUSer: firebase.User) => {
       if (fbUSer) {
-        this.afDB
+        this.userSubcription = this.afDB
           .doc(`${fbUSer.uid}/usuario`)
           .valueChanges()
-          .subscribe(usuarioObj => {
-            console.log(usuarioObj);
+          .subscribe((usuarioObj: any) => {
+            const newUSer = new User(usuarioObj);
+            this.store.dispatch(new SetUserAction(newUSer));
           });
+      } else {
+        this.userSubcription.unsubscribe();
       }
-      // this.store.dispatch(new SetUserAction(fbUSer.));
     });
   }
 
