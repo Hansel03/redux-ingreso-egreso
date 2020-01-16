@@ -58,6 +58,12 @@ export class IngresoEgresoService {
       .add({ ...ingresoEgreso });
   }
 
+  borrarIngresoEgreso(uid: string) {
+    const user = this.authService.getUsuario();
+
+    return this.afDB.doc(`${user.uid}/ingreso-egreso/items/${uid}`).delete();
+  }
+
   cancelarSubcriptions() {
     this.ingresoEgresoListerSubcription.unsubscribe();
     this.ingresoEgresoItemsSubcription.unsubscribe();
