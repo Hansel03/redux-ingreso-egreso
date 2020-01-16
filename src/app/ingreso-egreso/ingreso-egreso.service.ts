@@ -4,12 +4,17 @@ import { IngresoEgresoModel } from "./ingreso-egreso.model";
 import { AuthService } from "../auth/auth.service";
 import { Store } from "@ngrx/store";
 import { AppState } from "../app.reducer";
-import { filter } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
+import { SetItemsAction } from "./ingreso-egreso.actions";
+import { Subscription } from "rxjs";
 
 @Injectable({
   providedIn: "root"
 })
 export class IngresoEgresoService {
+  ingresoEgresoListerSubcription: Subscription = new Subscription();
+  ingresoEgresoItemsSubcription: Subscription = new Subscription();
+
   constructor(
     private afDB: AngularFirestore,
     public authService: AuthService,
@@ -17,7 +22,7 @@ export class IngresoEgresoService {
   ) {}
 
   initIngresoEgresoListener() {
-    this.store
+    this.ingresoEgresoListerSubcription = this.store
       .select("auth")
       .pipe(filter(auth => auth.user != null))
       .subscribe(auth => {
@@ -26,11 +31,21 @@ export class IngresoEgresoService {
   }
 
   private ingresoEgresoItems(uid: string) {
-    this.afDB
+    this.ingresoEgresoItemsSubcription = this.afDB
       .collection(`${uid}/ingreso-egreso/items`)
-      .valueChanges()
-      .subscribe(docData => {
-        console.log(docData);
+      .snapshotChanges()
+      .pipe(
+        map(docData => {
+          return docData.map(doc => {
+            return {
+              uid: doc.payload.doc.id,
+              ...(doc.payload.doc.data() as {})
+            };
+          });
+        })
+      )
+      .subscribe((coleccion: any[]) => {
+        this.store.dispatch(new SetItemsAction(coleccion));
       });
   }
 
@@ -41,5 +56,10 @@ export class IngresoEgresoService {
       .doc(`${user.uid}/ingreso-egreso`)
       .collection("items")
       .add({ ...ingresoEgreso });
+  }
+
+  cancelarSubcriptions() {
+    this.ingresoEgresoListerSubcription.unsubscribe();
+    this.ingresoEgresoItemsSubcription.unsubscribe();
   }
 }
