@@ -9,17 +9,22 @@ import { OrdenIngresoEgresoPipe } from "./orden-ingreso-egreso.pipe";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ChartsModule } from "ng2-charts";
 import { SharedModule } from "../shared/shared.module";
+import { DashboardRoutinModule } from "../dashboard/dashboard.routing.module";
 
 @NgModule({
-  imports: [CommonModule, ReactiveFormsModule, ChartsModule, SharedModule],
-  exports: [],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ChartsModule,
+    SharedModule,
+    DashboardRoutinModule
+  ],
   declarations: [
     IngresoEgresoComponent,
     DashboardComponent,
     EstadisticaComponent,
     DetalleComponent,
     OrdenIngresoEgresoPipe
-  ],
-  providers: []
+  ]
 })
 export class IngresoEgresoModule {}
