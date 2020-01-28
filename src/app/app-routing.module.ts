@@ -10,7 +10,7 @@ const routes: Routes = [
   {
     path: "",
     loadChildren: () =>
-      import("./ingreso-egreso/ingres-egreso.module").then(
+      import("./ingreso-egreso/ingreso-egreso.module").then(
         m => m.IngresoEgresoModule
       ),
     canLoad: [AuthGuardService]
