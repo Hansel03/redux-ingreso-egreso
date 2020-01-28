@@ -16,6 +16,7 @@ import { ChartsModule } from "ng2-charts";
 
 //Modulos perzonilizados
 import { AuthModule } from "./auth/auth.module";
+import { SharedModule } from "./shared/shared.module";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
@@ -23,9 +24,6 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
 import { IngresoEgresoComponent } from "./ingreso-egreso/ingreso-egreso.component";
 import { EstadisticaComponent } from "./ingreso-egreso/estadistica/estadistica.component";
 import { DetalleComponent } from "./ingreso-egreso/detalle/detalle.component";
-import { FooterComponent } from "./shared/footer/footer.component";
-import { NavbarComponent } from "./shared/navbar/navbar.component";
-import { SidebarComponent } from "./shared/sidebar/sidebar.component";
 import { environment } from "../environments/environment";
 import { OrdenIngresoEgresoPipe } from "./ingreso-egreso/orden-ingreso-egreso.pipe";
 
@@ -36,15 +34,13 @@ import { OrdenIngresoEgresoPipe } from "./ingreso-egreso/orden-ingreso-egreso.pi
     IngresoEgresoComponent,
     EstadisticaComponent,
     DetalleComponent,
-    FooterComponent,
-    NavbarComponent,
-    SidebarComponent,
     OrdenIngresoEgresoPipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AuthModule,
+    SharedModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
