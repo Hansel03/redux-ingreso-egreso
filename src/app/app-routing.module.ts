@@ -6,12 +6,13 @@ import { RegisterComponent } from "./auth/register/register.component";
 const routes: Routes = [
   { path: "login", component: LoginComponent },
   { path: "register", component: RegisterComponent },
-  // {
-  //   path: "",
-  //   component: DashboardComponent,
-  //   children: dashboardRoutes,
-  //   canActivate: [AuthGuardService]
-  // },
+  {
+    path: "",
+    loadChildren: () =>
+      import("./ingreso-egreso/ingres-egreso.module").then(
+        m => m.IngresoEgresoModule
+      )
+  },
   { path: "**", redirectTo: "" }
 ];
 
